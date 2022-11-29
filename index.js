@@ -12,27 +12,38 @@ const port = process.env.Port ||5000
 require('dotenv').config()
 
 // defult api
-app.get('/', (res,reaq)=>{
+app.get('/', (req,res)=>{
     res.send('server is on')
 })
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster001.flqwhrj.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run(){
     try{
+       const dbServicesCollection = client.db('wellpic').collection('services')
 
-
+    
+      app.get('/home/services', async(req,res)=>{
+         const query = {}
+         const results= await dbServicesCollection.find(query).limit(3).toArray()
+         res.send(results)
+      })
+      app.get('/all/services', async(req,res)=>{
+         const query = {}
+         const results= await dbServicesCollection.find(query).toArray()
+         res.send(results)
+      })
     }
     finally{
 
-
-        
     }
+
 }
+run().catch(er=> console.log(er))
 
 //port listen
 app.listen(port, ()=>{
