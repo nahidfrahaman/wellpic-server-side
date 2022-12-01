@@ -61,6 +61,16 @@ async function run(){
           const results = await rivewsCollection.find(filter).toArray()
           res.send(results)
       })
+
+      app.get('/myreviews/:email', async(req,res)=>{
+          
+         const email = req.params.email
+         
+         const filter = {email: email}
+         const results = await rivewsCollection.find(filter).toArray()
+         res.send(results)
+            
+      })
     }
     finally{
 
