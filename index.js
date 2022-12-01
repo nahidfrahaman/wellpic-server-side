@@ -17,7 +17,7 @@ app.get('/', (req,res)=>{
 })
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster001.flqwhrj.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -25,6 +25,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
        const dbServicesCollection = client.db('wellpic').collection('services')
+       const rivewsCollection = client.db('wellpic').collection('reviews')
 
     
       app.get('/home/services', async(req,res)=>{
@@ -36,6 +37,29 @@ async function run(){
          const query = {}
          const results= await dbServicesCollection.find(query).toArray()
          res.send(results)
+      })
+      app.get('/service/:id', async(req,res)=>{
+         const id = req.params.id
+         const filter = {_id: ObjectId(id)}
+         const results = await dbServicesCollection.findOne(filter)
+         res.send(results)
+
+      })
+      //post reviews 
+      app.post('/addreview', async(req,res)=>{
+          
+         const reviewInformation= req.body
+         const results = await rivewsCollection.insertOne(reviewInformation)
+         res.send(results)
+
+      })
+      //getReviews 
+      app.get('/reviews/:id', async(req,res)=>{
+          const {id}= req.params
+          
+          const filter = {serviceId: id}
+          const results = await rivewsCollection.find(filter).toArray()
+          res.send(results)
       })
     }
     finally{
