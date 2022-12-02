@@ -27,6 +27,11 @@ async function run(){
        const dbServicesCollection = client.db('wellpic').collection('services')
        const rivewsCollection = client.db('wellpic').collection('reviews')
 
+      app.post('/addservice', async(req, res)=>{
+          const serviceInformation = req.body
+          const results = await dbServicesCollection.insertOne(serviceInformation)
+          res.send(results)
+      })
     
       app.get('/home/services', async(req,res)=>{
          const query = {}
